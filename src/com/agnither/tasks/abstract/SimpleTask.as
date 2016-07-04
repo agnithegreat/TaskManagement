@@ -49,6 +49,12 @@ package com.agnither.tasks.abstract
         public function execute():void
         {
         }
+        
+        public function retry():void
+        {
+            _progress = 0;
+            execute();
+        }
 
         protected function progress(value: Number):void
         {

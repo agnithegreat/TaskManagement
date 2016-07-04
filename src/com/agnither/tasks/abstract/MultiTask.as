@@ -23,6 +23,12 @@ package com.agnither.tasks.abstract
             _tasks.push(task);
         }
 
+        override public function retry():void
+        {
+            // TODO: retry multitask
+            super.retry();
+        }
+
         private function nextTask():void
         {
             if (_tasks.length > _pointer)
