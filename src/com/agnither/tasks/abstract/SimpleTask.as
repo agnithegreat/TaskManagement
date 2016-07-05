@@ -6,10 +6,16 @@ package com.agnither.tasks.abstract
     import com.agnither.tasks.events.TaskEvent;
 
     import flash.events.EventDispatcher;
-    import flash.utils.setTimeout;
 
     public class SimpleTask extends EventDispatcher
     {
+        private var _retryLimit: int = 3;
+        public function set retryLimit(value: int):void
+        {
+            _retryLimit = value;
+        }
+        private var _retryCount: int = 0;
+
         protected var _data: Object;
         public function get data():Object
         {
@@ -28,8 +34,9 @@ package com.agnither.tasks.abstract
             return _progress;
         }
 
+        private var _completed: Boolean;
         private var _allowAutoComplete: Boolean = false;
-        
+
         private var _cost: Number = 1;
         public function get costValue():Number
         {
@@ -50,45 +57,77 @@ package com.agnither.tasks.abstract
         {
         }
         
-        public function retry():void
+        public function cancel():void
         {
-            _progress = 0;
-            execute();
+            complete();
         }
 
-        protected function progress(value: Number):void
+        final public function retry():void
+        {
+            if (_retryLimit == 0 || _retryCount++ < _retryLimit)
+            {
+                dispose();
+                execute();
+            } else {
+                error("retry limit reached");
+            }
+        }
+
+        final protected function progress(value: Number):void
         {
             _progress = value;
             dispatchEvent(new TaskEvent(TaskEvent.PROGRESS, value));
             
-            if (_allowAutoComplete && value == 1)
+            if (!_completed && _allowAutoComplete && value == 1)
             {
                 complete();
             }
         }
         
-        protected function complete():void
+        final protected function complete():void
         {
-            if (!_allowAutoComplete)
-            {
-                progress(1);
-            }
+            _completed = true;
+            processComplete();
+            progress(1);
             dispatchEvent(new TaskEvent(TaskEvent.COMPLETE, result));
             destroy();
         }
-        
+
+        final protected function error(message: String):void
+        {
+            log(message);
+            dispatchEvent(new TaskEvent(TaskEvent.ERROR, text));
+            destroy();
+        }
+
+        final protected function log(message: String):void
+        {
+            trace(this, message);
+        }
+
         public function get progressText():String
         {
             return String(int(_progress*100)+"%");
         }
-        
+
         public function get text():String
         {
             return progressText;
         }
         
-        public function destroy():void
+        protected function processComplete():void
         {
+            
+        }
+
+        protected function dispose():void
+        {
+        }
+        
+        final public function destroy():void
+        {
+            dispose();
+
             _data = null;
             _result = null;
         }

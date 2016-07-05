@@ -23,12 +23,6 @@ package com.agnither.tasks.abstract
             _tasks.push(task);
         }
 
-        override public function retry():void
-        {
-            // TODO: retry multitask
-            super.retry();
-        }
-
         private function nextTask():void
         {
             if (_tasks.length > _pointer)
@@ -37,6 +31,7 @@ package com.agnither.tasks.abstract
                 taskStart(task);
                 task.addEventListener(TaskEvent.PROGRESS, localProgress);
                 task.addEventListener(TaskEvent.COMPLETE, localCallback);
+                task.addEventListener(TaskEvent.ERROR, localError);
                 task.execute();
             } else {
                 complete();
@@ -81,17 +76,23 @@ package com.agnither.tasks.abstract
             var task: SimpleTask = _tasks[_pointer++];
             task.removeEventListener(TaskEvent.PROGRESS, localProgress);
             task.removeEventListener(TaskEvent.COMPLETE, localCallback);
+            task.removeEventListener(TaskEvent.ERROR, localError);
             taskComplete(task);
 
             nextTask();
         }
+
+        private function localError(event: TaskEvent):void
+        {
+            error(event.data as String);
+        }
         
-        override public function destroy():void
+        override protected function dispose():void
         {
             _tasks.length = 0;
             _tasks = null;
             
-            super.destroy();
+            super.dispose();
         }
     }
 }
