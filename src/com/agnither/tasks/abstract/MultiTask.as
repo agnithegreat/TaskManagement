@@ -20,6 +20,7 @@ package com.agnither.tasks.abstract
         public function addTask(task: SimpleTask, cost: Number = 1):void
         {
             task.costValue = cost;
+            task.parent = this;
             _tasks.push(task);
         }
 

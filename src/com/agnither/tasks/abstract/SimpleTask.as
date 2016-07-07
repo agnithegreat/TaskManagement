@@ -46,10 +46,12 @@ package com.agnither.tasks.abstract
         {
             _cost = value;
         }
+        
+        public var parent: MultiTask;
 
         public function SimpleTask(data: Object = null, autoComplete: Boolean = false)
         {
-            _data = data;
+            _data = data || {};
             _allowAutoComplete = autoComplete;
         }
         
