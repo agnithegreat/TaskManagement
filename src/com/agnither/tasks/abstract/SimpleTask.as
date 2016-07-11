@@ -98,6 +98,7 @@ package com.agnither.tasks.abstract
         final protected function error(message: String):void
         {
             log(message);
+            processError();
             dispatchEvent(new TaskEvent(TaskEvent.ERROR, text));
             destroy();
         }
@@ -120,6 +121,11 @@ package com.agnither.tasks.abstract
         protected function processComplete():void
         {
             
+        }
+
+        protected function processError():void
+        {
+
         }
 
         protected function dispose():void
