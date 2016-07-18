@@ -8,6 +8,7 @@ package com.agnither.tasks.events
     public class TaskEvent extends Event
     {
         public static const PROGRESS: String = "TaskEvent.PROGRESS";
+        public static const TASK_COMPLETE: String = "TaskEvent.TASK_COMPLETE";
         public static const COMPLETE: String = "TaskEvent.COMPLETE";
         public static const ERROR: String = "TaskEvent.ERROR";
 

@@ -4,6 +4,7 @@
 package com.agnither.tasks.abstract
 {
     import com.agnither.tasks.events.TaskEvent;
+    import com.agnither.tasks.events.TaskEvent;
 
     public class MultiTask extends SimpleTask
     {
@@ -53,7 +54,7 @@ package com.agnither.tasks.abstract
 
         protected function taskComplete(task: SimpleTask):void
         {
-
+            dispatchEvent(new TaskEvent(TaskEvent.TASK_COMPLETE));
         }
         
         private function localProgress(event: TaskEvent):void
