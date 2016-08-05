@@ -76,10 +76,11 @@ package com.agnither.tasks.abstract
             _duration += time;
             if (_durationLimit > 0 && _duration >= _durationLimit)
             {
+                _duration = 0;
                 error("duration limit reached");
             }
         }
-        
+
         public function cancel():void
         {
             complete();
@@ -110,18 +111,18 @@ package com.agnither.tasks.abstract
         final protected function complete():void
         {
             _completed = true;
-            processComplete();
             progress(1);
             dispatchEvent(new TaskEvent(TaskEvent.COMPLETE, result));
-            destroy();
+            processComplete();
+            dispose();
         }
 
         final protected function error(message: String):void
         {
             log(message);
-            processError();
             dispatchEvent(new TaskEvent(TaskEvent.ERROR, text));
-            destroy();
+            processError();
+            dispose();
         }
 
         final protected function log(message: String):void

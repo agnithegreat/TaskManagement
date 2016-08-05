@@ -10,6 +10,11 @@ package com.agnither.tasks.abstract
     {
         private var _tasks: Vector.<SimpleTask>;
         private var _pointer: int = 0;
+        
+        private function get currentTask():SimpleTask
+        {
+            return _tasks.length > _pointer ? _tasks[_pointer] : null;
+        }
 
         public function MultiTask(data: Object = null)
         {
@@ -27,9 +32,9 @@ package com.agnither.tasks.abstract
 
         private function nextTask():void
         {
-            if (_tasks.length > _pointer)
+            var task: SimpleTask = currentTask;
+            if (task != null)
             {
-                var task: SimpleTask = _tasks[_pointer];
                 taskStart(task);
                 task.addEventListener(TaskEvent.PROGRESS, localProgress);
                 task.addEventListener(TaskEvent.COMPLETE, localCallback);
@@ -37,6 +42,18 @@ package com.agnither.tasks.abstract
                 TaskSystem.getInstance().addTask(task);
             } else {
                 complete();
+            }
+        }
+
+        private function removeTask():void
+        {
+            var task: SimpleTask = currentTask;
+            if (task != null)
+            {
+                task.removeEventListener(TaskEvent.PROGRESS, localProgress);
+                task.removeEventListener(TaskEvent.COMPLETE, localCallback);
+                task.removeEventListener(TaskEvent.ERROR, localError);
+                taskComplete(task);
             }
         }
 
@@ -75,12 +92,8 @@ package com.agnither.tasks.abstract
 
         private function localCallback(event: TaskEvent):void
         {
-            var task: SimpleTask = _tasks[_pointer++];
-            task.removeEventListener(TaskEvent.PROGRESS, localProgress);
-            task.removeEventListener(TaskEvent.COMPLETE, localCallback);
-            task.removeEventListener(TaskEvent.ERROR, localError);
-            taskComplete(task);
-
+            removeTask();
+            _pointer++;
             nextTask();
         }
 
@@ -91,6 +104,7 @@ package com.agnither.tasks.abstract
         
         override protected function dispose():void
         {
+            removeTask();
             _tasks.length = 0;
             _tasks = null;
             

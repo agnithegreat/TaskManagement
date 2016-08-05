@@ -107,9 +107,8 @@ package com.agnither.tasks.global
                 throw new Error(this + " is already running");
             }
             
-            handleTimer(null);
             task.addEventListener(TaskEvent.COMPLETE, handleTaskComplete);
-            task.addEventListener(TaskEvent.ERROR, handleTaskComplete);
+            task.addEventListener(TaskEvent.ERROR, handleTaskError);
             _running.push(task);
             task.execute(_token);
         }
@@ -117,7 +116,7 @@ package com.agnither.tasks.global
         private function removeTask(task: SimpleTask):void
         {
             task.removeEventListener(TaskEvent.COMPLETE, handleTaskComplete);
-            task.removeEventListener(TaskEvent.ERROR, handleTaskComplete);
+            task.removeEventListener(TaskEvent.ERROR, handleTaskError);
 
             var runningIndex: int = _running.indexOf(task);
             if (runningIndex >= 0)
@@ -151,14 +150,21 @@ package com.agnither.tasks.global
         private function handleTaskComplete(event: TaskEvent):void
         {
             var task: SimpleTask = event.currentTarget as SimpleTask;
-            
+
             var callback: Function = _callbacks[task];
             if (callback != null)
             {
                 callback();
             }
             delete _callbacks[task];
-            
+
+            removeTask(task);
+        }
+        
+        private function handleTaskError(event: TaskEvent):void
+        {
+            var task: SimpleTask = event.currentTarget as SimpleTask;
+            delete _callbacks[task];
             removeTask(task);
         }
     }
