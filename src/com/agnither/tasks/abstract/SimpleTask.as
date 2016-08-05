@@ -112,16 +112,16 @@ package com.agnither.tasks.abstract
         {
             _completed = true;
             progress(1);
-            dispatchEvent(new TaskEvent(TaskEvent.COMPLETE, result));
             processComplete();
+            dispatchEvent(new TaskEvent(TaskEvent.COMPLETE, result));
             dispose();
         }
 
         final protected function error(message: String):void
         {
             log(message);
-            dispatchEvent(new TaskEvent(TaskEvent.ERROR, text));
             processError();
+            dispatchEvent(new TaskEvent(TaskEvent.ERROR, text));
             dispose();
         }
 
