@@ -4,7 +4,7 @@
 package com.agnither.tasks.abstract
 {
     import com.agnither.tasks.events.TaskEvent;
-    import com.agnither.tasks.events.TaskEvent;
+    import com.agnither.tasks.global.TaskSystem;
 
     public class MultiTask extends SimpleTask
     {
@@ -34,15 +34,15 @@ package com.agnither.tasks.abstract
                 task.addEventListener(TaskEvent.PROGRESS, localProgress);
                 task.addEventListener(TaskEvent.COMPLETE, localCallback);
                 task.addEventListener(TaskEvent.ERROR, localError);
-                task.execute();
+                TaskSystem.getInstance().addTask(task);
             } else {
                 complete();
             }
         }
 
-        override public function execute():void
+        override public function execute(token: Object):void
         {
-            super.execute();
+            super.execute(token);
             
             nextTask();
         }

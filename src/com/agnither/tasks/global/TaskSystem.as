@@ -84,17 +84,12 @@ package com.agnither.tasks.global
             _timer.stop();
         }
         
-        public function validateTaskExecution(task: SimpleTask):void
+        public function validateTaskExecution(task: SimpleTask, token: Object):void
         {
-            var currentTask: SimpleTask = task;
-            while (currentTask != null)
+            if (token != _token)
             {
-                if (_running.indexOf(currentTask) < 0)
-                {
-                    currentTask = currentTask.parent;
-                } else return;
+                throw new Error(task + " Task execution validation is failed");
             }
-            throw new Error(task + " Task execution validation is failed");
         }
         
         private function checkNextTask():void
@@ -116,7 +111,7 @@ package com.agnither.tasks.global
             task.addEventListener(TaskEvent.COMPLETE, handleTaskComplete);
             task.addEventListener(TaskEvent.ERROR, handleTaskComplete);
             _running.push(task);
-            task.execute();
+            task.execute(_token);
         }
 
         private function removeTask(task: SimpleTask):void

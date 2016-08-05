@@ -54,6 +54,8 @@ package com.agnither.tasks.abstract
         {
             _cost = value;
         }
+
+        private var _token: Object;
         
         public var parent: MultiTask;
 
@@ -63,9 +65,10 @@ package com.agnither.tasks.abstract
             _allowAutoComplete = autoComplete;
         }
         
-        public function execute():void
+        public function execute(token: Object):void
         {
-            TaskSystem.getInstance().validateTaskExecution(this);
+            _token = token;
+            TaskSystem.getInstance().validateTaskExecution(this, _token);
         }
         
         public function step(time: Number):void
@@ -87,7 +90,7 @@ package com.agnither.tasks.abstract
             if (_retryLimit == 0 || _retryCount++ < _retryLimit)
             {
                 dispose();
-                execute();
+                execute(_token);
             } else {
                 error("retry limit reached");
             }
