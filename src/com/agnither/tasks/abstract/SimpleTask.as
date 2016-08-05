@@ -4,6 +4,7 @@
 package com.agnither.tasks.abstract
 {
     import com.agnither.tasks.events.TaskEvent;
+    import com.agnither.tasks.global.TaskSystem;
 
     import flash.events.EventDispatcher;
 
@@ -15,6 +16,13 @@ package com.agnither.tasks.abstract
             _retryLimit = value;
         }
         private var _retryCount: int = 0;
+        
+        private var _durationLimit: Number = 0;
+        public function set durationLimit(value: Number):void
+        {
+            _durationLimit = value;
+        }
+        private var _duration: Number = 0;
 
         protected var _data: Object;
         public function get data():Object
@@ -57,6 +65,16 @@ package com.agnither.tasks.abstract
         
         public function execute():void
         {
+            TaskSystem.getInstance().validateTaskExecution(this);
+        }
+        
+        public function step(time: Number):void
+        {
+            _duration += time;
+            if (_durationLimit > 0 && _duration >= _durationLimit)
+            {
+                error("duration limit reached");
+            }
         }
         
         public function cancel():void
